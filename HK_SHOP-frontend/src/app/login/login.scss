@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+/* Spinner (only thing not in global theme) */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: white;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer link */
+.foot {
+  margin: 14px 0 0;
+  font-size: 13px;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.foot a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.foot a:hover {
+  text-decoration: underline;
+}

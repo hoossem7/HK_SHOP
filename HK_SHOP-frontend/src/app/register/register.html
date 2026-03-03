@@ -1,0 +1,67 @@
+<app-page-shell>
+  <div class="app-page">
+    <div class="shell">
+      <div class="page-head">
+        <div class="title">
+          <div class="brand-dot"></div>
+          <div>
+            <h1>Créer un compte</h1>
+            <p class="subtitle">Rejoins la plateforme en 30 secondes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card compact">
+        <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <div class="field">
+            <label for="username">Nom d'utilisateur</label>
+            <input id="username" type="text" formControlName="username" placeholder="ex: houssem7" />
+            <small class="hint" *ngIf="f['username'].touched && f['username'].hasError('required')">
+              Le nom d'utilisateur est obligatoire.
+            </small>
+            <small class="hint" *ngIf="f['username'].touched && f['username'].hasError('minlength')">
+              Minimum 3 caractères.
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" formControlName="email" placeholder="ex: you@email.com" />
+            <small class="hint" *ngIf="f['email'].touched && f['email'].hasError('required')">
+              L’email est obligatoire.
+            </small>
+            <small class="hint" *ngIf="f['email'].touched && f['email'].hasError('email')">
+              Format email invalide.
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="password">Mot de passe</label>
+            <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+            <small class="hint" *ngIf="f['password'].touched && f['password'].hasError('required')">
+              Le mot de passe est obligatoire.
+            </small>
+            <small class="hint" *ngIf="f['password'].touched && f['password'].hasError('minlength')">
+              Minimum 6 caractères.
+            </small>
+          </div>
+
+          <div class="alert error" *ngIf="error">{{ error }}</div>
+          <div class="alert success" *ngIf="success">{{ success }}</div>
+
+          <!-- IMPORTANT: utilise btn primary (ton thème global) -->
+          <button class="btn primary w-100" type="submit" [disabled]="loading">
+            <span *ngIf="!loading">S'inscrire</span>
+            <span *ngIf="loading" class="spinner" aria-hidden="true"></span>
+            <span *ngIf="loading">Création...</span>
+          </button>
+
+          <p class="foot">
+            Déjà un compte ?
+            <a routerLink="/login">Se connecter</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-page-shell>

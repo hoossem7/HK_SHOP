@@ -1,0 +1,119 @@
+<app-page-shell
+  title="Mon profil"
+  subtitle="Gère tes informations et ta sécurité."
+  variant="wide"
+>
+  <!-- Actions à droite du header -->
+  <div page-actions>
+    <button class="btn btn-ghost" (click)="load()" [disabled]="loading || saving">
+      Rafraîchir
+    </button>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="loading" class="alert info">Chargement...</div>
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+  <div *ngIf="success" class="alert success">{{ success }}</div>
+
+  <!-- Informations -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Informations</h2>
+      <p>Modifie ton username. L’email est verrouillé.</p>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="form">
+      <div class="grid two">
+        <div class="field">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            placeholder="Ton username"
+            autocomplete="username"
+          />
+          <small class="hint" *ngIf="usernameCtrl?.touched && usernameCtrl?.invalid">
+            Username invalide (min 3 caractères)
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="exemple@mail.com"
+            readonly
+            tabindex="-1"
+            class="readonly"
+          />
+          <small class="hint subtle">L’email ne peut pas être modifié.</small>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="saving || loading">
+        Enregistrer
+      </button>
+    </form>
+  </div>
+
+  <!-- Sécurité -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Sécurité</h2>
+      <p>Change ton mot de passe.</p>
+    </div>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="form">
+      <div class="grid three">
+        <div class="field">
+          <label for="currentPassword">Mot de passe actuel</label>
+          <input
+            id="currentPassword"
+            type="password"
+            formControlName="currentPassword"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <small class="hint" *ngIf="currentPasswordCtrl?.touched && currentPasswordCtrl?.invalid">
+            Obligatoire
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="newPassword">Nouveau mot de passe</label>
+          <input
+            id="newPassword"
+            type="password"
+            formControlName="newPassword"
+            placeholder="min 6 caractères"
+            autocomplete="new-password"
+          />
+          <small class="hint" *ngIf="newPasswordCtrl?.touched && newPasswordCtrl?.invalid">
+            Minimum 6 caractères
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirmer</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Confirmer le nouveau mot de passe"
+            autocomplete="new-password"
+          />
+          <small class="hint" *ngIf="confirmPasswordCtrl?.touched && confirmPasswordCtrl?.invalid">
+            Minimum 6 caractères
+          </small>
+        </div>
+      </div>
+
+      <button class="btn btn-danger" type="submit" [disabled]="saving || loading">
+        Changer le mot de passe
+      </button>
+    </form>
+  </div>
+</app-page-shell>

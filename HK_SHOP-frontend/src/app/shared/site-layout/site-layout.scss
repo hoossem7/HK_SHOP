@@ -1,0 +1,148 @@
+:host { display: block; }
+
+.layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.topbar {
+  height: 64px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(2, 6, 23, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgb(var(--primary)), rgb(var(--accent)));
+  box-shadow: 0 0 0 6px rgba(var(--primary), 0.15);
+}
+
+.brand .name {
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+
+.nav {
+  display: flex;
+  gap: 14px;
+}
+
+.nav a {
+  text-decoration: none;
+  font-weight: 800;
+  opacity: .9;
+}
+
+.nav a:hover { opacity: 1; text-decoration: underline; }
+.nav a.active { opacity: 1; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hello {
+  font-size: 13px;
+  opacity: .9;
+  white-space: nowrap;
+}
+
+.content {
+  padding: 0; /* tes pages utilisent app-page + shell etc */
+}
+
+.footer {
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  opacity: .9;
+  font-size: 13px;
+
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.footer a:hover { text-decoration: underline; }
+.sep { opacity: .5; }
+
+/* Logo */
+.logo {
+  height: 55px;   /* augmente ici */
+  width: auto;    /* garde proportions */
+  object-fit: contain;
+  display: block;
+}
+
+/* ===== Modal ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 50;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 60;
+  padding: 18px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 18px;
+  box-shadow: var(--shadow-xl);
+  padding: 18px;
+}
+
+.modal-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  letter-spacing: .2px;
+}
+
+.modal-card p {
+  margin: 0 0 14px;
+  font-size: 13px;
+  opacity: .85;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}

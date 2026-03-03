@@ -1,0 +1,74 @@
+<div class="layout">
+  <header class="topbar">
+    <!-- BRAND -->
+    <a class="brand" routerLink="/home" aria-label="HK Shop">
+  <img
+    class="logo"
+    src="assets/hkshop-logo.png"
+    alt="HK Shop logo"
+  />
+
+  <span class="name">HK Shop</span>
+</a>
+
+    <!-- NAV -->
+    <nav class="nav" *ngIf="isLoggedIn">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/products" routerLinkActive="active">Products</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+      <a routerLink="/contact" routerLinkActive="active">Contact</a>
+    </nav>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <span class="hello" *ngIf="isLoggedIn && username">Hi, {{ username }}</span>
+
+      <button
+        *ngIf="isLoggedIn"
+        class="btn ghost sm"
+        type="button"
+        (click)="openLogoutConfirm()"
+        [disabled]="loadingLogout"
+      >
+        Logout
+      </button>
+
+      <a *ngIf="!isLoggedIn" class="btn ghost sm" routerLink="/login">Login</a>
+    </div>
+  </header>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="footer">
+    <span>© {{ currentYear }} HK Shop</span>
+    <span class="sep">•</span>
+    <a routerLink="/contact">Contact</a>
+  </footer>
+
+  <!-- ✅ LOGOUT CONFIRM MODAL -->
+  <div
+    class="modal-backdrop"
+    *ngIf="showLogoutConfirm"
+    (click)="closeLogoutConfirm()"
+  ></div>
+
+  <div class="modal" *ngIf="showLogoutConfirm" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3>Confirm logout</h3>
+      <p>Are you sure you want to log out?</p>
+
+      <div class="modal-actions">
+        <button class="btn ghost sm" type="button" (click)="closeLogoutConfirm()" [disabled]="loadingLogout">
+          Cancel
+        </button>
+
+        <button class="btn danger sm" type="button" (click)="confirmLogout()" [disabled]="loadingLogout">
+          <span *ngIf="!loadingLogout">Logout</span>
+          <span *ngIf="loadingLogout">...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

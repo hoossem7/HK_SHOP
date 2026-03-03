@@ -1,0 +1,67 @@
+<app-page-shell>
+  <div class="app-page">
+    <div class="shell">
+      <!-- Header -->
+      <div class="page-head">
+        <div class="title">
+          <div class="brand-dot"></div>
+          <div>
+            <h1>Connexion</h1>
+            <p class="subtitle">Accède à ton espace en toute sécurité.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="card compact">
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="form">
+          <div class="grid">
+            <div class="field">
+              <label for="usernameOrEmail">Nom d'utilisateur ou Email</label>
+              <input
+                id="usernameOrEmail"
+                type="text"
+                formControlName="usernameOrEmail"
+                placeholder="ex: houssem7 ou you@email.com"
+                autocomplete="username"
+              />
+              <small class="hint" *ngIf="f['usernameOrEmail'].touched && f['usernameOrEmail'].hasError('required')">
+                Ce champ est obligatoire.
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="password">Mot de passe</label>
+              <input
+                id="password"
+                type="password"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <small class="hint" *ngIf="f['password'].touched && f['password'].hasError('required')">
+                Le mot de passe est obligatoire.
+              </small>
+              <small class="hint" *ngIf="f['password'].touched && f['password'].hasError('minlength')">
+                Minimum 6 caractères.
+              </small>
+            </div>
+          </div>
+
+          <div class="alert error" *ngIf="error">{{ error }}</div>
+
+          <button class="btn btn-primary" type="submit" [disabled]="loading">
+            <span *ngIf="!loading">Se connecter</span>
+            <span *ngIf="loading" class="spinner" aria-hidden="true"></span>
+            <span *ngIf="loading">Connexion...</span>
+          </button>
+
+          <p class="foot">
+            Pas encore de compte ?
+            <a routerLink="/register">Créer un compte</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-page-shell>

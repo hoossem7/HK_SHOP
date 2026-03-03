@@ -1,0 +1,23 @@
+<div class="app-page">
+  <div
+    class="shell"
+    [class.medium]="variant === 'medium'"
+    [class.wide]="variant === 'wide'"
+  >
+    <div class="page-head">
+      <div class="title">
+        <div class="brand-dot" *ngIf="showBrand"></div>
+        <div>
+          <h1>{{ title }}</h1>
+          <p class="subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+        </div>
+      </div>
+
+      <!-- zone actions à droite (boutons refresh, add, etc.) -->
+      <ng-content select="[page-actions]"></ng-content>
+    </div>
+
+    <!-- contenu principal -->
+    <ng-content></ng-content>
+  </div>
+</div>
