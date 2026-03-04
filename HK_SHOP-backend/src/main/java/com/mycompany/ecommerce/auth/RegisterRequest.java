@@ -5,4 +5,4 @@ import java.util.Set;
 /**
  * Requête d'enregistrement
  */
-public record RegisterRequest(String username, String email, String password, Set<String> roles) {}
+public record RegisterRequest(String username, String email, String password) {}

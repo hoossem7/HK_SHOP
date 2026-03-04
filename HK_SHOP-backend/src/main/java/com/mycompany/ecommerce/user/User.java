@@ -1,10 +1,10 @@
 package com.mycompany.ecommerce.user;
 
+import com.mycompany.ecommerce.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.experimental.SuperBuilder;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,11 +17,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@SuperBuilder
+public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 100)
     private String username;
@@ -33,15 +30,12 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 50)
     @Builder.Default
-    private Set<String> roles = new HashSet<>();
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    private Set<Role> roles = new HashSet<>();
 }

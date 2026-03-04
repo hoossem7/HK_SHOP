@@ -29,6 +29,15 @@ public enum BusinessErrorCodes {
     REFRESH_TOKEN_MISSING(40101, HttpStatus.UNAUTHORIZED, "Refresh token is missing"),
     REFRESH_TOKEN_INVALID(40102, HttpStatus.UNAUTHORIZED, "Refresh token is invalid or expired"),
 
+    // Token / Activation
+    TOKEN_INVALID(310, HttpStatus.BAD_REQUEST, "Token is invalid"),
+    TOKEN_EXPIRED(311, HttpStatus.BAD_REQUEST, "Token is expired or already used"),
+
+    // Activation
+    ACTIVATION_CODE_INVALID(310, HttpStatus.BAD_REQUEST, "Activation code is invalid"),
+    ACTIVATION_CODE_EXPIRED(311, HttpStatus.BAD_REQUEST, "Activation code is expired"),
+    ACTIVATION_CODE_USED(312, HttpStatus.BAD_REQUEST, "Activation code already used"),
+
     // Authorization
     UNAUTHORIZED_ACCESS(401, HttpStatus.UNAUTHORIZED, "Unauthorized access"),
     FORBIDDEN_ACCESS(403, HttpStatus.FORBIDDEN, "Access denied"),

@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hk_shop
+    username: admin
+    password: ${DB_PASSWORD:}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: 900000
+  refreshTokenExpirationMs: 2592000000
+  refreshTokenCookieMaxAgeSeconds: 2592000
+  refreshTokenCookieName: refreshToken
+  mail:
+    from: ${MAIL_FROM:${spring.mail.username}}
+    verificationCodeExpirationMinutes: 10

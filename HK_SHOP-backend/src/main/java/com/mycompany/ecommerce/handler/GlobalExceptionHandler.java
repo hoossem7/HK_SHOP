@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.mycompany.ecommerce.handler.BusinessErrorCodes.*;
 
@@ -24,22 +21,32 @@ import static com.mycompany.ecommerce.handler.BusinessErrorCodes.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ====== BusinessException (your domain errors) ======
+    // ====== BusinessException (domain errors) ======
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ExceptionResponse> handleBusinessException(BusinessException ex, HttpServletRequest req) {
-        return build(ex.getCode(), ex.getMessage(), null, req, null, null);
+
+        BusinessErrorCodes code = ex.getCode();
+
+        // ✅ message UI: priorité au message custom si fourni, sinon mapping par code
+        String uiMessage = (ex.getMessage() != null && !ex.getMessage().isBlank()
+                && !ex.getMessage().equals(code.getDescription()))
+                ? ex.getMessage()
+                : uiMessageFor(code);
+
+        // ✅ technical: on garde la description stable en debug si tu veux
+        String technical = null;
+
+        return build(code, uiMessage, technical, req, null, null);
     }
 
     // ====== Security / Auth ======
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
-        // Security best practice: do not reveal whether username exists
         return build(BAD_CREDENTIALS, "Nom d'utilisateur/email ou mot de passe incorrect.", null, req, null, null);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUsernameNotFound(UsernameNotFoundException ex, HttpServletRequest req) {
-        // Same response as bad credentials (avoid user enumeration)
         return build(BAD_CREDENTIALS, "Nom d'utilisateur/email ou mot de passe incorrect.", null, req, null, null);
     }
 
@@ -68,7 +75,7 @@ public class GlobalExceptionHandler {
             }
         });
 
-        return build(VALIDATION_ERROR, "Validation error.", null, req, validationErrors, fieldErrors);
+        return build(VALIDATION_ERROR, "Veuillez corriger les champs du formulaire.", null, req, validationErrors, fieldErrors);
     }
 
     // ====== Generic ======
@@ -105,5 +112,24 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(code.getHttpStatus()).body(body);
+    }
+
+    // ✅ MAPPING UI messages (FR)
+    private String uiMessageFor(BusinessErrorCodes code) {
+        return switch (code) {
+            case USERNAME_TAKEN -> "Ce nom d'utilisateur est déjà utilisé. Choisissez-en un autre.";
+            case EMAIL_TAKEN -> "Cet email est déjà utilisé. Essayez de vous connecter.";
+            case ACCOUNT_DISABLED -> "Votre compte n'est pas activé. Vérifiez vos emails pour le code d’activation.";
+            case USER_NOT_FOUND -> "Utilisateur introuvable.";
+            case INCORRECT_CURRENT_PASSWORD -> "Le mot de passe actuel est incorrect.";
+            case NEW_PASSWORD_DOES_NOT_MATCH -> "Le nouveau mot de passe et la confirmation ne correspondent pas.";
+            case UNAUTHORIZED_ACCESS -> "Vous devez être connecté pour effectuer cette action.";
+            case FORBIDDEN_ACCESS -> "Accès refusé.";
+            case ACTIVATION_CODE_INVALID -> "Code d’activation invalide.";
+            case ACTIVATION_CODE_EXPIRED -> "Code d’activation expiré. Demandez un nouveau code.";
+            case ACTIVATION_CODE_USED -> "Ce code d’activation a déjà été utilisé.";
+            case REFRESH_TOKEN_MISSING, REFRESH_TOKEN_INVALID -> "Votre session a expiré. Veuillez vous reconnecter.";
+            default -> "Une erreur est survenue.";
+        };
     }
 }

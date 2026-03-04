@@ -11,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -86,6 +89,16 @@ public class UserService {
     }
 
     private ProfileResponse mapToProfile(User user) {
-        return new ProfileResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles());
+        Set<String> roles = user.getRoles()
+                .stream()
+                .map(Role::name)
+                .collect(Collectors.toSet());
+
+        return new ProfileResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                roles
+        );
     }
 }

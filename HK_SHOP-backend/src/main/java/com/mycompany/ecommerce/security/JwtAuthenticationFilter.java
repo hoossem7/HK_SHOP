@@ -6,10 +6,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         try {
-            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            // ✅ Ne pas skipper si c'est "anonymous"
+            Authentication existing = SecurityContextHolder.getContext().getAuthentication();
+            if (existing != null
+                    && existing.isAuthenticated()
+                    && !(existing instanceof AnonymousAuthenticationToken)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -58,7 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String subject = jwtTokenProvider.extractSubject(token); // subject = userId
+            if (!jwtTokenProvider.validateToken(token)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String subject = jwtTokenProvider.extractSubject(token); // subject = userId (String)
             if (subject == null || subject.isBlank()) {
                 filterChain.doFilter(request, response);
                 return;
@@ -79,31 +91,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (!jwtTokenProvider.validateToken(token)) {
-                log.debug("JWT invalide/expiré pour userId {}", userId);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             UserDetails userDetails = org.springframework.security.core.userdetails.User
                     .withUsername(user.getUsername())
                     .password(user.getPassword())
                     .authorities(
                             user.getRoles().stream()
-                                    .map(SimpleGrantedAuthority::new)
+                                    .map(role -> new SimpleGrantedAuthority(role.name())) // ✅ FIX (Role -> String)
                                     .collect(Collectors.toList())
                     )
                     .build();
 
-            // ✅ TRÈS IMPORTANT: principal = userId (Long)
+            // ✅ principal = userId (Long) => AuditorAware<Long> va le récupérer
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
-                            userId, // ✅ principal
+                            userId,
                             null,
                             userDetails.getAuthorities()
                     );
 
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            WebAuthenticationDetailsSource webDetails = new WebAuthenticationDetailsSource();
+            auth.setDetails(new AuthDetails(user.getUsername(), webDetails.buildDetails(request)));
+
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             filterChain.doFilter(request, response);
@@ -111,6 +119,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             log.error("Erreur JWT filter: {}", ex.getMessage(), ex);
             filterChain.doFilter(request, response);
+        }
+    }
+
+    @Getter
+    public static class AuthDetails {
+        private final String username;
+        private final Object webDetails;
+
+        public AuthDetails(String username, Object webDetails) {
+            this.username = username;
+            this.webDetails = webDetails;
         }
     }
 }

@@ -5,14 +5,29 @@
         <div class="title">
           <div class="brand-dot"></div>
           <div>
-            <h1>Créer un compte</h1>
-            <p class="subtitle">Rejoins la plateforme en 30 secondes.</p>
+            <h1 *ngIf="step === 'register'">Créer un compte</h1>
+            <h1 *ngIf="step === 'activate'">Activer le compte</h1>
+
+            <p class="subtitle" *ngIf="step === 'register'">Rejoins la plateforme en 30 secondes.</p>
+            <p class="subtitle" *ngIf="step === 'activate'">
+              Saisis le code reçu par email pour finaliser l’inscription.
+            </p>
           </div>
         </div>
       </div>
 
       <div class="card compact">
-        <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <!-- =========================
+             ETAPE 1 : REGISTER
+        ========================== -->
+        <form
+          *ngIf="step === 'register'"
+          class="form"
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          novalidate
+        >
           <div class="field">
             <label for="username">Nom d'utilisateur</label>
             <input id="username" type="text" formControlName="username" placeholder="ex: houssem7" />
@@ -49,7 +64,6 @@
           <div class="alert error" *ngIf="error">{{ error }}</div>
           <div class="alert success" *ngIf="success">{{ success }}</div>
 
-          <!-- IMPORTANT: utilise btn primary (ton thème global) -->
           <button class="btn primary w-100" type="submit" [disabled]="loading">
             <span *ngIf="!loading">S'inscrire</span>
             <span *ngIf="loading" class="spinner" aria-hidden="true"></span>
@@ -61,6 +75,62 @@
             <a routerLink="/login">Se connecter</a>
           </p>
         </form>
+
+        <!-- =========================
+             ETAPE 2 : ACTIVATE
+        ========================== -->
+        <form
+          *ngIf="step === 'activate'"
+          class="form"
+          [formGroup]="activationForm"
+          (ngSubmit)="activate()"
+          novalidate
+        >
+          <div class="alert success">
+            Un code d’activation a été envoyé à <b>{{ registeredEmail }}</b>.
+            <br />
+            Vérifie aussi le dossier spam si tu ne le vois pas.
+          </div>
+
+          <div class="field">
+            <label for="code">Code d’activation</label>
+            <input
+              id="code"
+              type="text"
+              formControlName="code"
+              placeholder="ex: 123456"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+            />
+
+            <small class="hint" *ngIf="a['code'].touched && a['code'].hasError('required')">
+              Le code est obligatoire.
+            </small>
+            <small class="hint" *ngIf="a['code'].touched && a['code'].hasError('pattern')">
+              Le code doit contenir 6 chiffres.
+            </small>
+          </div>
+
+          <div class="alert error" *ngIf="error">{{ error }}</div>
+          <div class="alert success" *ngIf="success">{{ success }}</div>
+
+          <button class="btn primary w-100" type="submit" [disabled]="loading">
+            <span *ngIf="!loading">Activer</span>
+            <span *ngIf="loading" class="spinner" aria-hidden="true"></span>
+            <span *ngIf="loading">Activation...</span>
+          </button>
+
+          <button class="btn w-100" type="button" (click)="backToRegister()" [disabled]="loading">
+            Retour
+          </button>
+
+          <p class="foot">
+            Déjà activé ?
+            <a routerLink="/login">Se connecter</a>
+          </p>
+        </form>
+
       </div>
     </div>
   </div>
